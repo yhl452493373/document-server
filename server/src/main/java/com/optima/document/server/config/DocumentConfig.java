@@ -1,7 +1,6 @@
 package com.optima.document.server.config;
 
-import com.optima.document.api.DocumentService;
-import com.optima.document.server.api.DocumentServiceImpl;
+import com.optima.document.api.LegacyDocumentService;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -10,9 +9,11 @@ import org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter;
 
 /**
  * 服务端配置
+ *
  * @author Elias
- * @date 2021-09-28 16:12
+ * @since 2021-09-28 16:12
  */
+@SuppressWarnings("VulnerableCodeUsages")
 @Configuration
 @ConfigurationProperties(prefix = "document")
 @Data
@@ -24,13 +25,14 @@ public class DocumentConfig {
 
     /**
      * 文档接口
+     *
      * @return httpinvoker
      */
     @Bean(name = "/document-service")
-    HttpInvokerServiceExporter wordService() {
+    HttpInvokerServiceExporter wordService(LegacyDocumentService legacyDocumentService) {
         HttpInvokerServiceExporter exporter = new HttpInvokerServiceExporter();
-        exporter.setService( new DocumentServiceImpl() );
-        exporter.setServiceInterface(DocumentService.class);
+        exporter.setService(legacyDocumentService);
+        exporter.setServiceInterface(LegacyDocumentService.class);
         return exporter;
     }
 

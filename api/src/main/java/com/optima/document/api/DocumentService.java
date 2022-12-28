@@ -1,71 +1,44 @@
 package com.optima.document.api;
 
-import java.util.List;
 import java.util.Map;
 
 /**
- * 文档接口
- * @author Elias
- * @date 2021-09-28 16:00
+ * 文档接口，此类中用的poi2生成word文档，使用docto进行格式转换
+ *
+ * @author yanghuanglin
+ * @since 2022/12/28
  */
-public interface DocumentService {
+public interface DocumentService extends BaseDocumentService {
     /**
-     * generate word
-     * @param templateData word模版流
-     * @param dataModel 数据模型
-     * @return 修改后的文档流
+     * 通过调用poi生成word，仅tl-server模块下实现，仅支持docx格式
+     *
+     * @param templateData word模版流，仅支持docx格式
+     * @param dataModel    数据模型
+     * @return word文档流
      */
     default byte[] generateWord(byte[] templateData, Map<String, Object> dataModel) {
         throw new UnsupportedOperationException();
     }
 
     /**
-     * word to pdf
-     * @param templateData word模版流
-     * @param clear 是否清除占位符
-     * @return
+     * 通过调用poi将word转pdf，仅tl-server模块下实现，仅支持docx格式
+     *
+     * @param templateData word模版流，仅支持docx格式
+     * @param clear        是否清除占位符
+     * @return pdf文档流
      */
     default byte[] wordToPdf(byte[] templateData, boolean clear) {
         throw new UnsupportedOperationException();
     }
 
     /**
-     * word to image
-     * @param templateData word模版流
-     * @param targetFormat 目标格式 支持jpeg, jpg, gif, tiff or png
-     * @return
-     */
-    default byte[] wordToImage(byte[] templateData, String targetFormat) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
+     * word转图片，仅支持docx格式
      *
-     * @param source 文档
-     * @param toFindText 需要替换的文本
-     * @param imgSource 图片
-     * @param width 宽度
-     * @param height 高度
-     * @return 修改后的文档
+     * @param source          word文件流，仅支持docx格式
+     * @param targetExtension 目标格式 支持jpeg, jpg, gif, tiff or png
+     * @return 图片流
      */
-    default byte[] insertJpeg(byte[] source, String toFindText, byte[] imgSource, int width, int height){
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     *
-     * @param source
-     * @param toFindText
-     * @param imgSource
-     * @param width
-     * @param height
-     * @return
-     */
-    default byte[] insertJpeg(byte[] source, String toFindText, List<byte[]> imgSource, int width, int height) {
-        throw new UnsupportedOperationException();
-    }
-
-    default byte[] fieldToWord(byte[] source, Map<String, Object> infoMap) {
+    default byte[] wordToImage(byte[] source, String targetExtension) {
         throw new UnsupportedOperationException();
     }
 }

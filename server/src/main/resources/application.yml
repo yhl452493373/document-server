@@ -1,5 +1,5 @@
 server:
   port: 8090
 document:
-  doc-to-program: D:\\optima\\docto.exe
+  open-office-home: D:\\OpenOffice4\\program\\soffice.exe
 

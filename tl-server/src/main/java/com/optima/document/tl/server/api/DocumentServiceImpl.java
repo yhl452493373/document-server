@@ -13,30 +13,33 @@ import com.deepoove.poi.xwpf.BodyContainerFactory;
 import com.optima.document.api.DocumentService;
 import com.optima.document.tl.server.config.DocumentConfig;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.tools.imageio.ImageIOUtil;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * 服务接口实现
+ *
  * @author Elias
- * @date 2021-09-28 16:18
+ * @since 2021-09-28 16:18
  */
 @Slf4j
-@Component
+@Service
 public class DocumentServiceImpl implements DocumentService {
 
     /**
@@ -83,11 +86,48 @@ public class DocumentServiceImpl implements DocumentService {
     @Resource
     private DocumentConfig documentConfig;
 
-    @Override
+    public byte[] convert(byte[] sourceData, String sourceExtension, String targetExtension, String targetFormat) {
+        try {
+            if (!sourceExtension.contains("."))
+                sourceExtension = "." + sourceExtension;
+            if (!targetExtension.contains("."))
+                targetExtension = "." + targetExtension;
+            Path sourcePath = Files.createTempFile(UUID.randomUUID().toString(), sourceExtension);
+            Path targetPath = Files.createTempFile(UUID.randomUUID().toString(), targetExtension);
+            Files.write(sourcePath, sourceData);
+            try {
+                long begin = System.currentTimeMillis();
+                String command;
+                if (sourceExtension.contains("xls")) {
+                    command = "%s -XL -f %s -O %s -T %s";
+                } else if (sourceExtension.contains("ppt")) {
+                    command = "%s -PP -f %s -O %s -T %s";
+                } else {
+                    command = "%s -WD -f %s -O %s -T %s";
+                }
+                command = String.format(command, documentConfig.getDocToProgram(), sourcePath, targetPath, targetFormat);
+                Process p = Runtime.getRuntime().exec(command);
+                p.waitFor();
+                long end = System.currentTimeMillis();
+                log.info("docto {} to {} take time in millis:{}", sourceExtension, targetExtension, (end - begin));
+                return Files.readAllBytes(targetPath);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            } finally {
+                Files.delete(sourcePath);
+                Files.delete(targetPath);
+            }
+        } catch (IOException e) {
+            log.error("docto convert error", e);
+        }
+        return null;
+    }
+
     public byte[] generateWord(byte[] templateData, Map<String, Object> dataModel) {
         long start = System.currentTimeMillis();
         XWPFTemplate template = XWPFTemplate.compile(new ByteArrayInputStream(templateData), wtlConfig).render(dataModel);
-        try (ByteArrayOutputStream bos = new ByteArrayOutputStream()){
+        try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
             template.write(bos);
             log.info("word generate========consuming：{} milliseconds", System.currentTimeMillis() - start);
             return bos.toByteArray();
@@ -97,7 +137,10 @@ public class DocumentServiceImpl implements DocumentService {
         }
     }
 
-    @Override
+    public byte[] wordToPdf(byte[] source, String sourceFormat, boolean clear) {
+        return wordToPdf(source, clear);
+    }
+
     public byte[] wordToPdf(byte[] source, boolean clear) {
         try {
             long start = System.currentTimeMillis();
@@ -119,52 +162,36 @@ public class DocumentServiceImpl implements DocumentService {
                     return null;
                 }
             }
-            Path tempFilePath = Files.createTempFile(UUID.randomUUID().toString(), ".docx");
-            Files.write(tempFilePath, source);
-
-            Path pdfPath = Files.createTempFile(UUID.randomUUID().toString(), ".pdf");
-
-            try {
-                long begin = System.currentTimeMillis();
-                String command = "%s -f %s -O %s -T wdFormatPDF";
-                command = String.format(command, documentConfig.getDocToProgram(), tempFilePath, pdfPath);
-                Process p = Runtime.getRuntime().exec(command);
-                p.waitFor();
-                long end = System.currentTimeMillis();
-                log.info("docto take time in millis:" + (end - begin));
-                return Files.readAllBytes(pdfPath);
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            } finally {
-                Files.delete(tempFilePath);
-                Files.delete(pdfPath);
-            }
+            return convert(source, "docx", "pdf", "wdFormatPDF");
         } catch (Exception e) {
             log.error("word to pdf error", e);
             return null;
         }
     }
 
-    @Override
-    public byte[] wordToImage(byte[] source, String targetFormat) {
+    public byte[] wordToImage(byte[] source, String targetExtension) {
         try {
             byte[] pdfBytes = wordToPdf(source, true);
             long start = System.currentTimeMillis();
             PDDocument document = PDDocument.load(new ByteArrayInputStream(pdfBytes));
             PDFRenderer pdfRenderer = new PDFRenderer(document);
-            BufferedImage bim = pdfRenderer.renderImageWithDPI(
-                    0, 300, ImageType.RGB);
+            BufferedImage bim = pdfRenderer.renderImageWithDPI(0, 300, ImageType.RGB);
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                ImageIOUtil.writeImage(bim, targetFormat, bos, 300);
+            ImageIOUtil.writeImage(bim, targetExtension, bos, 300);
             document.close();
             log.info("word to image=======consuming：{} milliseconds", System.currentTimeMillis() - start);
-
             return bos.toByteArray();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("word to image error", e);
         }
         return null;
     }
 
+    public byte[] docToDocx(byte[] docData) {
+        return convert(docData, "doc", "docx", "wdFormatDocumentDefault");
+    }
+
+    public byte[] xlsToXlsx(byte[] xlsData) {
+        return convert(xlsData, "xls", "xlsx", "xlWorkbookDefault");
+    }
 }
