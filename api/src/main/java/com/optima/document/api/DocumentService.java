@@ -12,27 +12,27 @@ public interface DocumentService extends BaseDocumentService {
     /**
      * 通过调用poi生成word，仅tl-server模块下实现，仅支持docx格式
      *
-     * @param templateData word模版流，仅支持docx格式
-     * @param dataModel    数据模型
+     * @param sourceTemplate word模版流，仅支持docx格式
+     * @param dataModel      数据模型
      * @return word文档流
      */
-    default byte[] generateWord(byte[] templateData, Map<String, Object> dataModel) {
+    default byte[] generateWord(byte[] sourceTemplate, Map<String, Object> dataModel) {
         throw new UnsupportedOperationException();
     }
 
     /**
-     * 通过调用poi将word转pdf，仅tl-server模块下实现，仅支持docx格式
+     * 通过调用poi将word转pdf，仅tl-server模块下实现，如果clear为true，则仅支持docx格式
      *
-     * @param templateData word模版流，仅支持docx格式
-     * @param clear        是否清除占位符
+     * @param source word模版流，仅支持docx格式
+     * @param clear  是否清除占位符
      * @return pdf文档流
      */
-    default byte[] wordToPdf(byte[] templateData, boolean clear) {
+    default byte[] wordToPdf(byte[] source, boolean clear) {
         throw new UnsupportedOperationException();
     }
 
     /**
-     * word转图片，仅支持docx格式
+     * 通过pdfbox将word转图片，仅支持docx格式
      *
      * @param source          word文件流，仅支持docx格式
      * @param targetExtension 目标格式 支持jpeg, jpg, gif, tiff or png

@@ -11,18 +11,6 @@ import java.util.Map;
  */
 public interface LegacyDocumentService extends BaseDocumentService {
     /**
-     * 通过pdfbox将word转图片，仅server模块下实现
-     *
-     * @param templateData    word模版流
-     * @param sourceExtension 源文件后缀名，不包含"."
-     * @param targetExtension 目标格式 支持jpeg, jpg, gif, tiff or png
-     * @return 图片流
-     */
-    default byte[] wordToImage(byte[] templateData, String sourceExtension, String targetExtension) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
      * 通过jacob向文档中插入图片，仅server模块下实现
      *
      * @param source     文档流

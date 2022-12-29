@@ -44,6 +44,8 @@ public class LegacyDocumentServiceImpl implements LegacyDocumentService {
      */
     private byte[] convert(byte[] source, String sourceExtension, String targetExtension) {
         try {
+            sourceExtension = sourceExtension.replace(".","");
+            targetExtension = targetExtension.replace(".","");
             long start = System.currentTimeMillis();
             String command = "%s -headless -accept=\"socket,host=127.0.0.1,port=8100;urp;\" -nofirststartwizard";
             Process p = Runtime.getRuntime().exec(String.format(command, documentConfig.getOpenOfficeHome()));
@@ -55,7 +57,7 @@ public class LegacyDocumentServiceImpl implements LegacyDocumentService {
             converter.convert(new ByteArrayInputStream(source), formatRegistry.getFormatByFileExtension(sourceExtension), bos, formatRegistry.getFormatByFileExtension(targetExtension));
             connection.disconnect();
             p.destroy();
-            log.info("{} to {} take {} milliseconds", sourceExtension, targetExtension, System.currentTimeMillis() - start);
+            log.info("openoffice convert {} to {} take time in millis:{}", sourceExtension, targetExtension, System.currentTimeMillis() - start);
             return bos.toByteArray();
         } catch (Exception e) {
             e.printStackTrace();
@@ -87,8 +89,8 @@ public class LegacyDocumentServiceImpl implements LegacyDocumentService {
         return null;
     }
 
-    public byte[] convert(byte[] sourceData, String sourceExtension, String targetExtension, String targetFormat) {
-        return convert(sourceData, sourceExtension, targetExtension);
+    public byte[] convert(byte[] source, String sourceExtension, String targetExtension, String targetFormat) {
+        return convert(source, sourceExtension, targetExtension);
     }
 
     public byte[] wordToImage(byte[] source, String sourceExtension, String targetExtension) {
@@ -108,11 +110,11 @@ public class LegacyDocumentServiceImpl implements LegacyDocumentService {
         return null;
     }
 
-    public byte[] docToDocx(byte[] docData) {
-        return convert(docData, "doc", "docx");
+    public byte[] docToDocx(byte[] source) {
+        return convert(source, "doc", "docx");
     }
 
-    public byte[] xlsToXlsx(byte[] xlsData) {
-        return convert(xlsData, "xls", "xlsx");
+    public byte[] xlsToXlsx(byte[] source) {
+        return convert(source, "xls", "xlsx");
     }
 }

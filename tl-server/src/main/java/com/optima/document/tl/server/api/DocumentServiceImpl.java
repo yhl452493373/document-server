@@ -38,6 +38,7 @@ import java.util.UUID;
  * @author Elias
  * @since 2021-09-28 16:18
  */
+@SuppressWarnings("rawtypes")
 @Slf4j
 @Service
 public class DocumentServiceImpl implements DocumentService {
@@ -86,15 +87,13 @@ public class DocumentServiceImpl implements DocumentService {
     @Resource
     private DocumentConfig documentConfig;
 
-    public byte[] convert(byte[] sourceData, String sourceExtension, String targetExtension, String targetFormat) {
+    public byte[] convert(byte[] source, String sourceExtension, String targetExtension, String targetFormat) {
         try {
-            if (!sourceExtension.contains("."))
-                sourceExtension = "." + sourceExtension;
-            if (!targetExtension.contains("."))
-                targetExtension = "." + targetExtension;
-            Path sourcePath = Files.createTempFile(UUID.randomUUID().toString(), sourceExtension);
-            Path targetPath = Files.createTempFile(UUID.randomUUID().toString(), targetExtension);
-            Files.write(sourcePath, sourceData);
+            sourceExtension = sourceExtension.replace(".", "");
+            targetExtension = targetExtension.replace(".", "");
+            Path sourcePath = Files.createTempFile(UUID.randomUUID().toString(), "." + sourceExtension);
+            Path targetPath = Files.createTempFile(UUID.randomUUID().toString(), "." + targetExtension);
+            Files.write(sourcePath, source);
             try {
                 long begin = System.currentTimeMillis();
                 String command;
@@ -109,7 +108,7 @@ public class DocumentServiceImpl implements DocumentService {
                 Process p = Runtime.getRuntime().exec(command);
                 p.waitFor();
                 long end = System.currentTimeMillis();
-                log.info("docto {} to {} take time in millis:{}", sourceExtension, targetExtension, (end - begin));
+                log.info("docto convert {} to {} take time in millis:{}", sourceExtension, targetExtension, (end - begin));
                 return Files.readAllBytes(targetPath);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -124,12 +123,12 @@ public class DocumentServiceImpl implements DocumentService {
         return null;
     }
 
-    public byte[] generateWord(byte[] templateData, Map<String, Object> dataModel) {
+    public byte[] generateWord(byte[] sourceTemplate, Map<String, Object> dataModel) {
         long start = System.currentTimeMillis();
-        XWPFTemplate template = XWPFTemplate.compile(new ByteArrayInputStream(templateData), wtlConfig).render(dataModel);
+        XWPFTemplate template = XWPFTemplate.compile(new ByteArrayInputStream(sourceTemplate), wtlConfig).render(dataModel);
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
             template.write(bos);
-            log.info("word generate========consuming：{} milliseconds", System.currentTimeMillis() - start);
+            log.info("word generate take time in millis:{}", System.currentTimeMillis() - start);
             return bos.toByteArray();
         } catch (Exception e) {
             log.error("word generate error", e);
@@ -179,7 +178,7 @@ public class DocumentServiceImpl implements DocumentService {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             ImageIOUtil.writeImage(bim, targetExtension, bos, 300);
             document.close();
-            log.info("word to image=======consuming：{} milliseconds", System.currentTimeMillis() - start);
+            log.info("word to image take time in millis:{}", System.currentTimeMillis() - start);
             return bos.toByteArray();
         } catch (Exception e) {
             log.error("word to image error", e);
@@ -187,11 +186,15 @@ public class DocumentServiceImpl implements DocumentService {
         return null;
     }
 
-    public byte[] docToDocx(byte[] docData) {
-        return convert(docData, "doc", "docx", "wdFormatDocumentDefault");
+    public byte[] wordToImage(byte[] source, String sourceExtension, String targetExtension) {
+        return wordToImage(source, targetExtension);
     }
 
-    public byte[] xlsToXlsx(byte[] xlsData) {
-        return convert(xlsData, "xls", "xlsx", "xlWorkbookDefault");
+    public byte[] docToDocx(byte[] source) {
+        return convert(source, "doc", "docx", "wdFormatDocumentDefault");
+    }
+
+    public byte[] xlsToXlsx(byte[] source) {
+        return convert(source, "xls", "xlsx", "xlWorkbookDefault");
     }
 }
