@@ -10,6 +10,7 @@
     <description>文档操作模块</description>
     <modules>
         <module>document-api</module>
+        <module>document-test</module>
         <module>document-server</module>
     </modules>
 
