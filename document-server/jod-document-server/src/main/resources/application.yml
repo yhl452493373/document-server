@@ -1,0 +1,16 @@
+server:
+  port: 9005
+
+jodconverter:
+  local:
+    # 启动本地转换
+    enabled: true
+    # macOS下：program/soffice 的 program 所在目录 或 MacOS/soffice 的 MacOS 所在目录
+    # windows下：program/soffice.exe 的 program 所在目录
+    # linux下：program/soffice.bin 的 program 所在目录
+    # 如果不配置，则自动查找
+    office-home: /Applications/LibreOffice.app/Contents
+    # 一个端口表示一个常驻进程，默认只有一个进程，端口为2002
+    port-numbers: [ 2002 ]
+    # 每个进程最多处理多个任务，默认为200
+    max-tasks-per-process: 200

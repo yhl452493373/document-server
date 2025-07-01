@@ -1,4 +1,0 @@
-server:
-  port: 9004
-document:
-  doc-to-program: C:\\DocumentServer\\docto.exe
