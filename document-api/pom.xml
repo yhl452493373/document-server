@@ -45,6 +45,15 @@
 					</execution>
 				</executions>
 			</plugin>
+
+			<!-- 3. 跳过可执行 JAR 的生成 -->
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 </project>
