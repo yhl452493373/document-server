@@ -44,6 +44,9 @@ public class DocumentConverter {
         // 生成的word转为图片
         byte[] wordedToImage = documentService.wordToImage(generatedWord, "jpg");
         File imageFile = new File(targetFile.getAbsolutePath().replace(".pdf", ".jpg"));
+        if (imageFile.exists()) {
+            imageFile.delete();
+        }
         Path imagePath = imageFile.toPath();
         Files.write(imagePath, wordedToImage);
     }
