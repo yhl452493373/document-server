@@ -135,10 +135,6 @@ public class DocumentServiceImpl implements DocumentService {
         }
     }
 
-    public byte[] wordToPdf(byte[] source, String sourceFormat, boolean clear) {
-        return wordToPdf(source, clear);
-    }
-
     public byte[] wordToPdf(byte[] source, boolean clear) {
         try {
             long start = System.currentTimeMillis();
@@ -183,10 +179,6 @@ public class DocumentServiceImpl implements DocumentService {
             log.error("word to image error", e);
         }
         return null;
-    }
-
-    public byte[] wordToImage(byte[] source, String sourceExtension, String targetExtension) {
-        return wordToImage(source, targetExtension);
     }
 
     public byte[] docToDocx(byte[] source) {

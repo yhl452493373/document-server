@@ -1,12 +1,43 @@
 package com.optima.document.api;
 
+import java.util.Map;
+
 /**
- * 文档接口，此类中用的poi2生成word文档，使用docto进行格式转换
+ * 文档操作接口
  *
  * @author yanghuanglin
  * @since 2022/12/28
  */
-public interface DocumentService extends BaseDocumentService {
+public interface DocumentService {
+    /**
+     * 格式转换
+     *
+     * @param source          源文件流，仅支持docx格式
+     * @param sourceExtension 源文件后缀名，不包含"."
+     * @param targetExtension 目标文件后缀名，不包含"."
+     * @param targetFormat    目标文件格式，需与目标文件后缀名匹配。
+     *                        jodconverter-document-server 下此参数无效。
+     *                        docto-document-server 下参考:
+     *                        <a href="https://docs.microsoft.com/en-us/dotnet/api/microsoft.office.interop.word.wdsaveformat">word格式</a>
+     *                        或 <a href="https://docs.microsoft.com/en-us/dotnet/api/microsoft.office.interop.excel.xlfileformat">excel格式</a>
+     *                        或 <a href="https://docs.microsoft.com/en-us/office/vba/api/powerpoint.presentation.saveas">powerpoint格式</a>
+     * @return 转换后的文件流
+     */
+    default byte[] convert(byte[] source, String sourceExtension, String targetExtension, String targetFormat) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * 通过调用poi生成word
+     *
+     * @param sourceTemplate word模版流，仅支持docx格式
+     * @param dataModel      数据模型
+     * @return word文档流
+     */
+    default byte[] generateWord(byte[] sourceTemplate, Map<String, Object> dataModel) {
+        throw new UnsupportedOperationException();
+    }
+
     /**
      * 通过调用poi将word转pdf，如果clear为true，则仅支持docx格式
      *
@@ -26,6 +57,26 @@ public interface DocumentService extends BaseDocumentService {
      * @return 图片流
      */
     default byte[] wordToImage(byte[] source, String targetExtension) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * doc转为docx
+     *
+     * @param source doc文档流
+     * @return docx文档流
+     */
+    default byte[] docToDocx(byte[] source) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * xls转为xlsx
+     *
+     * @param source xls文档流
+     * @return xlsx文档流
+     */
+    default byte[] xlsToXlsx(byte[] source) {
         throw new UnsupportedOperationException();
     }
 }

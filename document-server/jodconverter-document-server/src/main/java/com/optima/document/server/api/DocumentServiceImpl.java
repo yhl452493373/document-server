@@ -91,7 +91,7 @@ public class DocumentServiceImpl implements DocumentService {
      * @param targetExtension 目标文件后缀名
      * @return 转换后的文件流
      */
-    public byte[] convert(byte[] source, String sourceExtension, String targetExtension) {
+    private byte[] convert(byte[] source, String sourceExtension, String targetExtension) {
         try {
             sourceExtension = sourceExtension.replace(".", "");
             targetExtension = targetExtension.replace(".", "");
@@ -129,10 +129,6 @@ public class DocumentServiceImpl implements DocumentService {
             log.error("word generate error", e);
             return null;
         }
-    }
-
-    public byte[] wordToPdf(byte[] source, String sourceFormat, boolean clear) {
-        return wordToPdf(source, clear);
     }
 
     public byte[] wordToPdf(byte[] source, boolean clear) {
@@ -179,10 +175,6 @@ public class DocumentServiceImpl implements DocumentService {
             log.error("word to image error", e);
         }
         return null;
-    }
-
-    public byte[] wordToImage(byte[] source, String sourceExtension, String targetExtension) {
-        return wordToImage(source, targetExtension);
     }
 
     public byte[] docToDocx(byte[] source) {

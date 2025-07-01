@@ -9,6 +9,9 @@ import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class DocumentConverter {
@@ -29,10 +32,19 @@ public class DocumentConverter {
             targetFile.delete();
         }
 
-        String sourceExtension = sourceFile.getName().substring(sourceFile.getName().lastIndexOf("."));
-        String targetExtension = targetFile.getName().substring(targetFile.getName().lastIndexOf("."));
+        Map<String, Object> params = new HashMap<>();
+        params.put("callerName", "张三");
 
-        byte[] converted = documentService.convert(Files.readAllBytes(sourceFile.toPath()), sourceExtension, targetExtension);
-        Files.write(targetFile.toPath(), converted);
+        // 生成word，并转为pdf
+        byte[] generatedWord = documentService.generateWord(Files.readAllBytes(sourceFile.toPath()), params);
+        byte[] wordedToPdf = documentService.wordToPdf(generatedWord, true);
+        Path pdfPath = targetFile.toPath();
+        Files.write(pdfPath, wordedToPdf);
+
+        // 生成的word转为图片
+        byte[] wordedToImage = documentService.wordToImage(generatedWord, "jpg");
+        File imageFile = new File(targetFile.getAbsolutePath().replace(".pdf", ".jpg"));
+        Path imagePath = imageFile.toPath();
+        Files.write(imagePath, wordedToImage);
     }
 }

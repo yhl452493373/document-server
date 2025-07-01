@@ -28,14 +28,6 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>3.3.0</version>
-				<configuration>
-					<!-- 可选：指定主类（如果需要可执行） -->
-					<archive>
-						<manifest>
-							<mainClass>com.example.MyApp</mainClass>
-						</manifest>
-					</archive>
-				</configuration>
 			</plugin>
 
 			<!-- 2. 使用 maven-source-plugin 生成源码 JAR -->
