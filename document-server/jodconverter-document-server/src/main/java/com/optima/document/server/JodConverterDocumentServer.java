@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class JodDocumentServer {
+public class JodConverterDocumentServer {
 
 	public static void main(String[] args) {
-		SpringApplication.run(JodDocumentServer.class, args);
+		SpringApplication.run(JodConverterDocumentServer.class, args);
 	}
 
 }

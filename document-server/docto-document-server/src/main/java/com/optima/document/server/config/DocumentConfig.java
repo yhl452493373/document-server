@@ -13,10 +13,9 @@ import org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter;
  * @author Elias
  * @since 2021-09-28 16:12
  */
-@SuppressWarnings("deprecation")
+@Data
 @Configuration
 @ConfigurationProperties(prefix = "document")
-@Data
 public class DocumentConfig {
 
     private String docToProgram;
@@ -26,6 +25,7 @@ public class DocumentConfig {
      *
      * @return httpinvoker
      */
+    @SuppressWarnings("deprecation")
     @Bean(name = "/document-service")
     HttpInvokerServiceExporter wordService(DocumentService documentService) {
         HttpInvokerServiceExporter exporter = new HttpInvokerServiceExporter();

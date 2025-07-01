@@ -13,7 +13,7 @@
     <description>文档操作模块</description>
     <modules>
         <module>docto-document-server</module>
-        <module>jod-document-server</module>
+        <module>jodconverter-document-server</module>
     </modules>
 
     <properties>

@@ -7,10 +7,10 @@
         <artifactId>document-server</artifactId>
         <version>2.0.0</version>
     </parent>
-    <artifactId>jod-document-server</artifactId>
+    <artifactId>jodconverter-document-server</artifactId>
     <version>2.0.0</version>
-    <name>Jod Document Server</name>
-    <description>Jod 文档操作服务</description>
+    <name>JodConverter Document Server</name>
+    <description>JodConverter 文档操作服务</description>
 
     <properties>
         <jodconverter.version>4.4.9</jodconverter.version>

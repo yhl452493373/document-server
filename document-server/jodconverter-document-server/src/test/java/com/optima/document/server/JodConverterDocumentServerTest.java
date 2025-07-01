@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Disabled
-public class JodDocumentServerTest {
+public class JodConverterDocumentServerTest {
 
     @Test
     public void test() throws IOException {
@@ -33,7 +33,7 @@ public class JodDocumentServerTest {
     private static DocumentService buildDocumentService() {
         // 创建客户端代理
         HttpInvokerProxyFactoryBean factoryBean = new HttpInvokerProxyFactoryBean();
-        factoryBean.setServiceUrl("http://10.211.55.13:9005/document-service");
+        factoryBean.setServiceUrl("http://127.0.0.1:9005/document-service");
         factoryBean.setServiceInterface(DocumentService.class);
         factoryBean.afterPropertiesSet();
 
