@@ -67,6 +67,63 @@ sudo systemctl start document-server
 
 ---
 
+## 构建Docker镜像以便于通过Docker容器运行
+
+1.先通过maven打包[jodconverter-document-server](document-server/jodconverter-document-server)
+
+2.执行[build.sh](document-docker/build.sh)
+
+3.通过`docker load -i document-server-1.0.tar.gz`导入镜像，通过`docker ps | grep document-server`查看镜像版本
+
+4.编写`docker-compose.yml`，在其中指定镜像启动
+```yml
+version: '3.8'
+services:
+  document-server:
+    image: document-server:1.0
+    environment:
+      - CUSTOM_PORT=3000
+      - CUSTOM_HTTPS_PORT=3001
+      - DOCUMENT_SERVER_PORT=9004
+      - PORT_NUMBERS=2001,2002,2003
+      - MAX_TASKS_PER_PROCESS=100
+    ports:
+      # 用于通过http访问libreoffice
+      - 3000:3000
+      # 用于通过https访问libreoffice
+      - 3001:3001
+      # 文书转换服务端口，用于document-api远程调用document-server
+      - 9004:9004
+    volumes:
+      # libreoffice的配置保存路径
+      - ./config:/config
+      # document-server的配置，如不指定，则以默认为准。建议通过环境变量修改关键配置
+      - ./application.yml:/app/application.yml
+    restart: unless-stopped
+```
+
+`application.yml`默认内容如下：
+```yml
+server:
+  port: ${DOCUMENT_SERVER_PORT:9004}
+
+jodconverter:
+  local:
+    # 启动本地转换
+    enabled: true
+    # macOS下：program/soffice 的 program 所在目录 或 MacOS/soffice 的 MacOS 所在目录
+    # windows下：program/soffice.exe 的 program 所在目录
+    # linux下：program/soffice.bin 的 program 所在目录
+    # 如果不配置，则自动查找
+    #office-home: /Applications/LibreOffice.app/Contents
+    # 一个端口表示一个常驻进程，默认只有一个进程，端口为2002
+    port-numbers: ${PORT_NUMBERS:2002}
+    # 每个进程最多处理多个任务，默认为200
+    max-tasks-per-process: ${MAX_TASKS_PER_PROCESS:200}
+```
+
+---
+
 ## windows下才用[docto-document-server](document-server/docto-document-server)
 
 通过`java -jar ./document-server-2.0.0.jar --spring.config.location=./application.yml`执行

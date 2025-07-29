@@ -1,5 +1,5 @@
 server:
-  port: 9004
+  port: ${DOCUMENT_SERVER_PORT:9004}
 
 jodconverter:
   local:
@@ -9,8 +9,8 @@ jodconverter:
     # windows下：program/soffice.exe 的 program 所在目录
     # linux下：program/soffice.bin 的 program 所在目录
     # 如果不配置，则自动查找
-    office-home: /Applications/LibreOffice.app/Contents
+    #office-home: /Applications/LibreOffice.app/Contents
     # 一个端口表示一个常驻进程，默认只有一个进程，端口为2002
-    port-numbers: [ 2002 ]
+    port-numbers: ${PORT_NUMBERS:2002}
     # 每个进程最多处理多个任务，默认为200
-    max-tasks-per-process: 200
+    max-tasks-per-process: ${MAX_TASKS_PER_PROCESS:200}
