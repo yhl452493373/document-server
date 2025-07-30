@@ -83,6 +83,7 @@ services:
     image: document-server:1.0
     container_name: document-server
     environment:
+      - DISABLE_IPV6=true
       - CUSTOM_PORT=3000
       - CUSTOM_HTTPS_PORT=3001
       - DOCUMENT_SERVER_PORT=9004
