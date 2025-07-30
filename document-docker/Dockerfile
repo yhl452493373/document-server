@@ -18,7 +18,7 @@ COPY fonts /usr/share/fonts/truetype
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-#see https://hub.docker.com/r/linuxserver/libreoffice
+#设置环境变量默认值，参考 https://hub.docker.com/r/linuxserver/libreoffice
 ENV PUID=1000
 ENV PGID=1000
 ENV TZ=Asia/Shanghai
@@ -26,10 +26,12 @@ ENV LC_ALL=zh_CN.UTF-8
 ENV TITLE="Libre Office"
 ENV DISABLE_IPV6=true
 ENV CUSTOM_PORT=3000
-ENV CUSTOM_HTTPS_PORT1=3001
+ENV CUSTOM_HTTPS_PORT=3001
 
 ENV DOCUMENT_SERVER_PORT=9004
 ENV PORT_NUMBERS=2002
 ENV MAX_TASKS_PER_PROCESS=200
+
+EXPOSE 9004
 
 ENTRYPOINT ["/entrypoint.sh"]
