@@ -102,6 +102,16 @@ services:
       # document-server的配置，如不指定，则以默认为准。建议通过环境变量修改关键配置
       - ./application.yml:/app/application.yml
     restart: unless-stopped
+    # 如果要使用现有网络而不创建新网络，则取消下面的注释
+#    networks:
+#      # 现有网络的名称
+#      - exist_network
+
+# 如果要使用现有网络而不创建新网络，则取消下面的注释
+#networks:
+#  # 现有网络的名称
+#  exist_network:
+#    external: true
 ```
 
 `application.yml`默认内容如下：
