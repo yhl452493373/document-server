@@ -10,7 +10,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -34,6 +36,11 @@ public class DocumentConverter {
 
         Map<String, Object> params = new HashMap<>();
         params.put("callerName", "张三");
+
+        List<String> departmentList = new ArrayList<>();
+        departmentList.add("处置部门1");
+        departmentList.add("处置部门2");
+        params.put("departmentList", departmentList);
 
         // 生成word，并转为pdf
         byte[] generatedWord = documentService.generateWord(Files.readAllBytes(sourceFile.toPath()), params);

@@ -2,21 +2,17 @@ package com.optima.document.server.api;
 
 import com.deepoove.poi.XWPFTemplate;
 import com.deepoove.poi.config.Configure;
-import com.deepoove.poi.data.PictureRenderData;
-import com.deepoove.poi.data.TextRenderData;
-import com.deepoove.poi.policy.ListRenderPolicy;
-import com.deepoove.poi.policy.PictureRenderPolicy;
-import com.deepoove.poi.render.RenderContext;
 import com.deepoove.poi.template.run.RunTemplate;
 import com.deepoove.poi.xwpf.BodyContainer;
 import com.deepoove.poi.xwpf.BodyContainerFactory;
 import com.optima.document.api.DocumentService;
+import com.optima.document.api.Gramer;
+import com.optima.document.server.config.DocumentConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.tools.imageio.ImageIOUtil;
-import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.jodconverter.core.DocumentConverter;
 import org.jodconverter.core.document.DefaultDocumentFormatRegistry;
 import org.jodconverter.core.document.DocumentFormat;
@@ -26,8 +22,6 @@ import javax.annotation.Resource;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -41,47 +35,10 @@ import java.util.Map;
 public class DocumentServiceImpl implements DocumentService {
     @Resource
     private DocumentConverter documentConverter;
-
-    /**
-     * word模版引擎配置
-     */
-    private static final Configure wtlConfig = Configure.builder().buildGramer("${", "}")
-            .setValidErrorHandler(new Configure.DiscardHandler())
-            .addPlugin('%', new ListRenderPolicy() {
-                @Override
-                public void doRender(RenderContext<List<Object>> context) throws Exception {
-                    XWPFRun run = context.getRun();
-                    List<?> dataList = context.getData();
-                    Iterator<?> var5 = dataList.iterator();
-                    while (var5.hasNext()) {
-                        Object data = var5.next();
-                        if (data instanceof TextRenderData) {
-                            run.setText(((TextRenderData) data).getText());
-                            if (var5.hasNext()) {
-                                run.setText("，");
-                            }
-                        } else if (data instanceof PictureRenderData) {
-                            PictureRenderPolicy.Helper.renderPicture(run, (PictureRenderData) data);
-                        }
-
-                    }
-                }
-
-            })
-            .setRenderDataComputeFactory(envModel ->
-                    el -> {
-                        Object data = envModel.getRoot();
-                        if ("#this".equals(el)) {
-                            return data;
-                        } else if (data instanceof Map) {
-                            Map dataMap = ((Map) data);
-                            if (dataMap.containsKey(el)) {
-                                return dataMap.get(el);
-                            }
-                        }
-                        return null;
-                    })
-            .build();
+    @Resource
+    private DocumentConfig documentConfig;
+    @Resource
+    private Configure wtlConfig;
 
     /**
      * 文件格式转换
@@ -185,4 +142,7 @@ public class DocumentServiceImpl implements DocumentService {
         return convert(source, "xls", "xlsx");
     }
 
+    public Gramer gramer() {
+        return documentConfig.getGramer();
+    }
 }

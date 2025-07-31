@@ -1,0 +1,32 @@
+{
+  "properties": [
+    {
+      "name": "document.gramer.prefix",
+      "type": "java.lang.String",
+      "description": "模板语法开始字符串. 默认为 '${'.",
+      "defaultValue": "${",
+      "sourceType": "com.optima.document.api.Gramer"
+    },
+    {
+      "name": "document.gramer.suffix",
+      "type": "java.lang.String",
+      "description": "模板语法结束字符串. 默认为 '}'.",
+      "defaultValue": "}",
+      "sourceType": "com.optima.document.api.Gramer"
+    },
+    {
+      "name": "document.gramer.customize-list",
+      "type": "java.lang.Character",
+      "description": "自定义列表对象标签. 默认为 '%'. 只能为单个字符.",
+      "defaultValue": "%",
+      "sourceType": "com.optima.document.api.Gramer"
+    },
+    {
+      "name": "document.gramer.customize-list-string-delimiting",
+      "type": "java.lang.String",
+      "description": "自定义列表对象标签处理字符串列表时的分隔符. 默认为 '、'.",
+      "defaultValue": "、",
+      "sourceType": "com.optima.document.api.Gramer"
+    }
+  ]
+}

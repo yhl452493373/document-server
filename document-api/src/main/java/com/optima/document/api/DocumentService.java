@@ -9,6 +9,7 @@ import java.util.Map;
  * @since 2022/12/28
  */
 public interface DocumentService {
+
     /**
      * 格式转换
      *
@@ -78,5 +79,25 @@ public interface DocumentService {
      */
     default byte[] xlsToXlsx(byte[] source) {
         throw new UnsupportedOperationException();
+    }
+
+    /**
+     * 获取模板语法配置
+     * <ul>
+     * <li>
+     * 模板语法参考：<a href="https://deepoove.com/poi-tl/">POI-TL语法</a>
+     * </li>
+     * <li>
+     * 这里的配置会将原来的 {{ 替换为{@link Gramer#getPrefix()}， }} 替换为{@link Gramer#getSuffix()}
+     * </li>
+     * <li>
+     * 增加以{@link Gramer#getCustomizeListTag()}开头的列表对象处理插件，其字符串类型列表分隔符为{@link Gramer#getCustomizeListTagStringDelimiting()}
+     * </li>
+     * </ul>
+     *
+     * @return 模板语法配置
+     */
+    default Gramer gramer() {
+        return new Gramer();
     }
 }

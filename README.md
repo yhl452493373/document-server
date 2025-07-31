@@ -89,6 +89,14 @@ services:
       - DOCUMENT_SERVER_PORT=9004
       - PORT_NUMBERS=2001,2002,2003
       - MAX_TASKS_PER_PROCESS=100
+      # 传递环境变量时，$ 是特殊符号，需要 $$ 来表示
+      # linux 命令中，$ 也是特殊符号，需要在前面增加 \ 表示转义特殊符号
+      # 如果需要传递 ${ ，则需要写成 \$${ 。其首先被 docker 解析为 \${ ，\${ 作为linux命令的一部分，$转义后，相当于字符串 ${
+      # 如果不是类似 ${ ，如 {{ ，则无需转义
+      - GRAMER_PREFIX="\$${"
+      - GRAMER_SUFFIX="}"
+      - GRAMER_CUSTOMIZE_LIST="%"
+      - GRAMER_CUSTOMIZE_LIST_STRING_DELIMITING="，"
     ports:
       # 用于通过http访问libreoffice
       - 3000:3000
@@ -118,6 +126,16 @@ services:
 ```yml
 server:
   port: ${DOCUMENT_SERVER_PORT:9004}
+
+document:
+  gramer:
+    default:
+      prefix: '${'
+      suffix: '}'
+    prefix: ${GRAMER_PREFIX:${document.gramer.default.prefix}}
+    suffix: ${GRAMER_SUFFIX:${document.gramer.default.suffix}}
+    customize-list-tag: ${GRAMER_CUSTOMIZE_LIST:%}
+    customize-list-tag-string-delimiting: ${GRAMER_CUSTOMIZE_LIST_STRING_DELIMITING:，}
 
 jodconverter:
   local:

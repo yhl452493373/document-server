@@ -2,22 +2,17 @@ package com.optima.document.server.api;
 
 import com.deepoove.poi.XWPFTemplate;
 import com.deepoove.poi.config.Configure;
-import com.deepoove.poi.data.PictureRenderData;
-import com.deepoove.poi.data.TextRenderData;
-import com.deepoove.poi.policy.ListRenderPolicy;
-import com.deepoove.poi.policy.PictureRenderPolicy;
-import com.deepoove.poi.render.RenderContext;
 import com.deepoove.poi.template.run.RunTemplate;
 import com.deepoove.poi.xwpf.BodyContainer;
 import com.deepoove.poi.xwpf.BodyContainerFactory;
 import com.optima.document.api.DocumentService;
+import com.optima.document.api.Gramer;
 import com.optima.document.server.config.DocumentConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.tools.imageio.ImageIOUtil;
-import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -27,8 +22,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -38,53 +31,13 @@ import java.util.UUID;
  * @author Elias
  * @since 2021-09-28 16:18
  */
-@SuppressWarnings("rawtypes")
 @Slf4j
 @Service
 public class DocumentServiceImpl implements DocumentService {
     @Resource
     private DocumentConfig documentConfig;
-
-    /**
-     * word模版引擎配置
-     */
-    Configure wtlConfig = Configure.builder().buildGramer("${", "}")
-            .setValidErrorHandler(new Configure.DiscardHandler())
-            .addPlugin('%', new ListRenderPolicy() {
-                @Override
-                public void doRender(RenderContext<List<Object>> context) throws Exception {
-                    XWPFRun run = context.getRun();
-                    List<?> dataList = context.getData();
-                    Iterator<?> var5 = dataList.iterator();
-                    while (var5.hasNext()) {
-                        Object data = var5.next();
-                        if (data instanceof TextRenderData) {
-                            run.setText(((TextRenderData) data).getText());
-                            if (var5.hasNext()) {
-                                run.setText("，");
-                            }
-                        } else if (data instanceof PictureRenderData) {
-                            PictureRenderPolicy.Helper.renderPicture(run, (PictureRenderData) data);
-                        }
-
-                    }
-                }
-
-            })
-            .setRenderDataComputeFactory(envModel ->
-                    el -> {
-                        Object data = envModel.getRoot();
-                        if ("#this".equals(el)) {
-                            return data;
-                        } else if (data instanceof Map) {
-                            Map dataMap = ((Map) data);
-                            if (dataMap.containsKey(el)) {
-                                return dataMap.get(el);
-                            }
-                        }
-                        return null;
-                    })
-            .build();
+    @Resource
+    private Configure wtlConfig;
 
     public byte[] convert(byte[] source, String sourceExtension, String targetExtension, String targetFormat) {
         try {
@@ -187,5 +140,9 @@ public class DocumentServiceImpl implements DocumentService {
 
     public byte[] xlsToXlsx(byte[] source) {
         return convert(source, "xls", "xlsx", "xlWorkbookDefault");
+    }
+
+    public Gramer gramer() {
+        return documentConfig.getGramer();
     }
 }

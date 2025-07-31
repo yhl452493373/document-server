@@ -7,7 +7,7 @@ mkdir -p app
 
 # 构建jar
 echo 构建jar
-mvn -f ../document-server/jodconverter-document-server/pom.xml clean package -Dmaven.test.skip=true
+mvn -f ../pom.xml clean package -Dmaven.test.skip=true
 echo jar构建完成
 
 # 复制所需文件

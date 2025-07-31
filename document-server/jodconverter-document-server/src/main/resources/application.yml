@@ -1,6 +1,16 @@
 server:
   port: ${DOCUMENT_SERVER_PORT:9004}
 
+document:
+  gramer:
+    default:
+      prefix: '${'
+      suffix: '}'
+    prefix: ${GRAMER_PREFIX:${document.gramer.default.prefix}}
+    suffix: ${GRAMER_SUFFIX:${document.gramer.default.suffix}}
+    customize-list: ${GRAMER_CUSTOMIZE_LIST:%}
+    customize-list-string-delimiting: ${GRAMER_CUSTOMIZE_LIST_STRING_DELIMITING:，}
+
 jodconverter:
   local:
     # 启动本地转换

@@ -10,7 +10,11 @@ exec java -jar /app/application.jar \
     --server.port=${DOCUMENT_SERVER_PORT} \
     --spring.config.location=/app/application.yml \
     --jodconverter.local.port-numbers=${PORT_NUMBERS} \
-    --jodconverter.local.max-tasks-per-process=${MAX_TASKS_PER_PROCESS}
+    --jodconverter.local.max-tasks-per-process=${MAX_TASKS_PER_PROCESS} \
+    --document.gramer.prefix="${GRAMER_PREFIX}" \
+    --document.gramer.suffix="${GRAMER_SUFFIX}" \
+    --document.gramer.customize-list="${GRAMER_CUSTOMIZE_LIST}" \
+    --document.gramer.customize-list-string-delimiting="${GRAMER_CUSTOMIZE_LIST_STRING_DELIMITING}"
 EOF
 
 # 设置可执行权限
