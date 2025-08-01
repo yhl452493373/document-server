@@ -91,7 +91,7 @@ public interface DocumentService {
      * 这里的配置会将原来的 {{ 替换为{@link Gramer#getPrefix()}， }} 替换为{@link Gramer#getSuffix()}
      * </li>
      * <li>
-     * 增加以{@link Gramer#getCustomizeListTag()}开头的列表对象处理插件，其字符串类型列表分隔符为{@link Gramer#getCustomizeListTagStringDelimiting()}
+     * 增加以{@link Gramer#getCustomizeList()}开头的列表对象处理插件，其字符串类型列表分隔符为{@link Gramer#getCustomizeListStringDelimiting()}
      * </li>
      * </ul>
      *
