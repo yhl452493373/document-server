@@ -1,10 +1,19 @@
 #!/bin/sh
+set -e
 
-# 确保目录存在
-mkdir -p /etc/services.d/java
+# -----------------------------
+# 可选：启动 LibreOffice headless 监听服务（端口2002）用于文档转换
+# -----------------------------
+# 你可以根据需要开启或关闭
+libreoffice --headless --accept="socket,host=0.0.0.0,port=${PORT_NUMBERS};urp;" --nologo --nofirststartwizard &
+echo "LibreOffice headless started on port ${PORT_NUMBERS}"
 
-# 创建Java服务启动脚本
-cat > /etc/services.d/java/run <<EOF
+# -----------------------------
+# 启动 Java 应用
+# -----------------------------
+echo "Starting Java application..."
+rm -rf /app/start.sh
+cat > /app/start.sh <<EOF
 #!/bin/sh
 exec java -jar /app/application.jar \
     --server.port=${DOCUMENT_SERVER_PORT} \
@@ -17,8 +26,5 @@ exec java -jar /app/application.jar \
     --document.gramer.customize-list-string-delimiting="${GRAMER_CUSTOMIZE_LIST_STRING_DELIMITING}"
 EOF
 
-# 设置可执行权限
-chmod +x /etc/services.d/java/run
-
-# 启动s6-overlay（它会自动管理所有服务）
-exec /init
+chmod 755 /app/start.sh
+sh /app/start.sh

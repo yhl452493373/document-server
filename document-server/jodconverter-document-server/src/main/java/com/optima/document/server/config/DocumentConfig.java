@@ -93,7 +93,7 @@ public class DocumentConfig {
      */
     @SuppressWarnings("deprecation")
     @Bean(name = "/document-service")
-    HttpInvokerServiceExporter wordService(DocumentService documentService) {
+    public HttpInvokerServiceExporter wordService(DocumentService documentService) {
         HttpInvokerServiceExporter exporter = new HttpInvokerServiceExporter();
         exporter.setService(documentService);
         exporter.setServiceInterface(DocumentService.class);
