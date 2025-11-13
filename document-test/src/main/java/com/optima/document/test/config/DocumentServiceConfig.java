@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean;
 
-
 @Getter
 @Setter
 @Configuration
@@ -23,6 +22,7 @@ public class DocumentServiceConfig {
     public DocumentService documentService() {
         // 创建客户端代理
         HttpInvokerProxyFactoryBean factoryBean = new HttpInvokerProxyFactoryBean();
+
         String serviceUrl;
         if (server.endsWith("/")) {
             serviceUrl = server + "document-service";

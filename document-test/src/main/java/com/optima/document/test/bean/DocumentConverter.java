@@ -1,5 +1,6 @@
 package com.optima.document.test.bean;
 
+import com.deepoove.poi.data.Pictures;
 import com.optima.document.api.DocumentService;
 import com.optima.document.test.config.DocumentServiceConfig;
 import org.springframework.stereotype.Component;
@@ -10,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,6 +43,9 @@ public class DocumentConverter {
         departmentList.add("处置部门1");
         departmentList.add("处置部门2");
         params.put("departmentList", departmentList);
+
+        byte[] bytes = Files.readAllBytes(Paths.get("/Users/yanghuanglin/Downloads/02.png"));
+        params.put("img", Pictures.ofBytes(bytes).size(48, 27).create());
 
         // 生成word，并转为pdf
         byte[] generatedWord = documentService.generateWord(Files.readAllBytes(sourceFile.toPath()), params);
