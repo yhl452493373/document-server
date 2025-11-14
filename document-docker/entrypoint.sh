@@ -2,17 +2,16 @@
 set -e
 
 # -----------------------------
-# 可选：启动 LibreOffice headless 监听服务（端口2002）用于文档转换
+# 临时目录权限设置、清理
 # -----------------------------
-# 你可以根据需要开启或关闭
-libreoffice --headless --accept="socket,host=0.0.0.0,port=${PORT_NUMBERS};urp;" --nologo --nofirststartwizard &
-echo "LibreOffice headless started on port ${PORT_NUMBERS}"
+chmod 1777 /tmp
+rm -rf /tmp/.jodconverter_* || true
 
 # -----------------------------
 # 启动 Java 应用
 # -----------------------------
 echo "Starting Java application..."
-rm -rf /app/start.sh
+
 cat > /app/start.sh <<EOF
 #!/bin/sh
 exec java -jar /app/application.jar \
@@ -27,4 +26,4 @@ exec java -jar /app/application.jar \
 EOF
 
 chmod 755 /app/start.sh
-sh /app/start.sh
+exec /app/start.sh

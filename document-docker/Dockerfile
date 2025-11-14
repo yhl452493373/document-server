@@ -9,12 +9,22 @@ ENV LC_ALL=zh_CN.UTF-8
 
 # 安装 LibreOffice + 字体支持
 RUN rm -f /etc/apt/sources.list.d/* && \
-    echo "deb https://mirrors.ustc.edu.cn/ubuntu/ noble main restricted universe multiverse" > /etc/apt/sources.list && \
-    echo "deb https://mirrors.ustc.edu.cn/ubuntu/ noble-security main restricted universe multiverse" >> /etc/apt/sources.list && \
+    ARCH=$(dpkg --print-architecture) && \
+    if [ "$ARCH" = "arm64" ]; then \
+        echo "deb https://mirrors.ustc.edu.cn/ubuntu-ports noble main restricted universe multiverse" > /etc/apt/sources.list && \
+        echo "deb https://mirrors.ustc.edu.cn/ubuntu-ports noble-security main restricted universe multiverse" >> /etc/apt/sources.list && \
+        echo "deb https://mirrors.ustc.edu.cn/ubuntu-ports noble-updates main restricted universe multiverse" >> /etc/apt/sources.list; \
+    else \
+        echo "deb https://mirrors.ustc.edu.cn/ubuntu noble main restricted universe multiverse" > /etc/apt/sources.list && \
+        echo "deb https://mirrors.ustc.edu.cn/ubuntu noble-security main restricted universe multiverse" >> /etc/apt/sources.list && \
+        echo "deb https://mirrors.ustc.edu.cn/ubuntu noble-updates main restricted universe multiverse" >> /etc/apt/sources.list; \
+    fi && \
     apt update && \
+    echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" | debconf-set-selections && \
     apt install -y --no-install-recommends \
         libreoffice \
         libreoffice-java-common \
+        ttf-mscorefonts-installer \
         fonts-dejavu \
         fonts-noto-cjk \
         fontconfig \
@@ -22,6 +32,7 @@ RUN rm -f /etc/apt/sources.list.d/* && \
         tzdata \
         ca-certificates && \
     locale-gen zh_CN.UTF-8 && \
+    dpkg-reconfigure --frontend noninteractive locales && \
     rm -rf /var/lib/apt/lists/*
 
 # 设置工作目录
@@ -31,7 +42,12 @@ RUN mkdir -p /app/logs
 # 拷贝应用文件、配置、字体
 COPY app/document-server-*.jar /app/application.jar
 COPY app/application.yml /app/application.yml
+
+# 拷贝字体文件并刷新字体缓存
 COPY fonts /usr/share/fonts/truetype
+RUN fc-cache -fv
+
+# 入口
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
