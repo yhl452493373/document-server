@@ -1,5 +1,6 @@
 package com.optima.document.test.bean;
 
+import com.deepoove.poi.data.PictureRenderData;
 import com.deepoove.poi.data.Pictures;
 import com.optima.document.api.DocumentService;
 import com.optima.document.test.config.DocumentServiceConfig;
@@ -45,7 +46,13 @@ public class DocumentConverter {
         params.put("departmentList", departmentList);
 
         byte[] bytes = Files.readAllBytes(Paths.get("/Users/yanghuanglin/Downloads/02.png"));
+
         params.put("img", Pictures.ofBytes(bytes).size(48, 27).create());
+
+        List<PictureRenderData> imgList = new ArrayList<>();
+        imgList.add(Pictures.ofBytes(bytes).size(48, 27).create());
+        imgList.add(Pictures.ofBytes(bytes).size(48, 27).create());
+        params.put("imgList", imgList);
 
         // 生成word，并转为pdf
         byte[] generatedWord = documentService.generateWord(Files.readAllBytes(sourceFile.toPath()), params);
