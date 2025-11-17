@@ -54,6 +54,8 @@ public class DocumentConverter {
         imgList.add(Pictures.ofBytes(bytes).size(48, 27).create());
         params.put("imgList", imgList);
 
+        params.put("urlImg",Pictures.ofUrl("https://xct.cdhncy.cn/file/city/2025/10/28/fa03c40bdfc64a4f9e1241ebda6b3fda_1761641676690.jpeg").create());
+
         // 生成word，并转为pdf
         byte[] generatedWord = documentService.generateWord(Files.readAllBytes(sourceFile.toPath()), params);
         byte[] wordedToPdf = documentService.wordToPdf(generatedWord, true);
