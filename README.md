@@ -98,10 +98,6 @@ services:
       - GRAMER_CUSTOMIZE_LIST="%"
       - GRAMER_CUSTOMIZE_LIST_STRING_DELIMITING="，"
     ports:
-      # 用于通过http访问libreoffice
-      - 3000:3000
-      # 用于通过https访问libreoffice
-      - 3001:3001
       # 文书转换服务端口，用于document-api远程调用document-server
       - 9004:9004
     volumes:
