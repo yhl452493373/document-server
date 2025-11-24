@@ -20,14 +20,14 @@ cp ../document-server/jodconverter-document-server/target/application.yml app/
 echo 开始构建amd64镜像...
 docker buildx build --platform linux/amd64 -t yhl452493373/document-server:1.0 ./
 rm -rf document-server-1.0.tar.gz
-docker save document-server:1.0 | gzip > document-server-1.0.tar.gz
+docker save yhl452493373/document-server:1.0 | gzip > document-server-1.0.tar.gz
 echo amd64镜像构建成功.
 
 #arm64
 echo 开始构建arm64镜像...
 docker buildx build --platform linux/arm64 -t yhl452493373/document-server:1.0.arm64 ./
 rm -rf document-server-1.0.arm64.tar.gz
-docker save document-server:1.0.arm64 | gzip > document-server-1.0.arm64.tar.gz
+docker save yhl452493373/document-server:1.0.arm64 | gzip > document-server-1.0.arm64.tar.gz
 echo arm64镜像构建成功.
 
 # 清理临时文件
