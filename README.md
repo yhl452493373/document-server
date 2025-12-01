@@ -11,7 +11,7 @@
 + [docto-document-server](document-server/docto-document-server)下使用poi-tl处理word文件，使用docto调用`Microsoft Office`来转换格式，`java -jar xxx.jar`启动
     + 仅能运行在Windows，兼容性最好，比较慢
   
-+ [document-fonts](document-fonts)为linux下需要安装的中文字体
++ [document-docker/fonts](document-docker/fonts)为linux下需要安装的中文字体
 
 ---
 
