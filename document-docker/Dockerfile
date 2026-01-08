@@ -44,7 +44,10 @@ COPY app/document-server-*.jar /app/application.jar
 COPY app/application.yml /app/application.yml
 
 # 拷贝字体文件并刷新字体缓存
-COPY fonts /usr/share/fonts/truetype
+COPY fonts/truetype /usr/share/fonts/truetype
+COPY fonts/cesi /usr/share/fonts/cesi
+COPY fonts/gb /usr/share/fonts/gb
+COPY fonts/wps-office /usr/share/fonts/wps-office
 RUN fc-cache -fv
 
 # 入口
