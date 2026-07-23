@@ -12,3 +12,5 @@ document:
     customize-list-string-delimiting: ${GRAMER_CUSTOMIZE_LIST_STRING_DELIMITING:，}
 
   doc-to-program: C:\\DocumentServer\\docto.exe
+
+  min-inflate-ratio: 0.0

@@ -10,6 +10,7 @@ import com.optima.document.api.DocumentService;
 import com.optima.document.api.Gramer;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.poi.openxml4j.util.ZipSecureFile;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -34,12 +35,14 @@ import java.util.Map;
 public class DocumentConfig {
     @NestedConfigurationProperty
     private Gramer gramer;
+    private double minInflateRatio = 0d;
 
     /**
      * word模版引擎配置
      */
     @Bean(name = "wtlConfig")
     public Configure wtlConfig() {
+        ZipSecureFile.setMinInflateRatio(minInflateRatio);
         return Configure.builder().buildGramer(gramer.getPrefix(), gramer.getSuffix())
                 .setValidErrorHandler(new Configure.DiscardHandler())
                 .addPlugin(gramer.getCustomizeList(), new ListRenderPolicy() {
