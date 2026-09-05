@@ -1,6 +1,7 @@
 package com.optima.document.server.config;
 
 import com.deepoove.poi.config.Configure;
+import com.deepoove.poi.config.ConfigureBuilder;
 import com.deepoove.poi.data.PictureRenderData;
 import com.deepoove.poi.data.TextRenderData;
 import com.deepoove.poi.policy.ListRenderPolicy;
@@ -8,6 +9,8 @@ import com.deepoove.poi.policy.PictureRenderPolicy;
 import com.deepoove.poi.render.RenderContext;
 import com.optima.document.api.DocumentService;
 import com.optima.document.api.Gramer;
+import com.optima.document.server.compute.EnhancedELRenderDataCompute;
+import com.optima.document.server.compute.EnhancedSpringELRenderDataCompute;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.poi.openxml4j.util.ZipSecureFile;
@@ -36,6 +39,7 @@ public class DocumentConfig {
     @NestedConfigurationProperty
     private Gramer gramer;
     private double minInflateRatio = 0d;
+    private boolean springEl = false;
 
     /**
      * word模版引擎配置
@@ -43,7 +47,7 @@ public class DocumentConfig {
     @Bean(name = "wtlConfig")
     public Configure wtlConfig() {
         ZipSecureFile.setMinInflateRatio(minInflateRatio);
-        return Configure.builder().buildGramer(gramer.getPrefix(), gramer.getSuffix())
+        ConfigureBuilder configureBuilder = Configure.builder().buildGramer(gramer.getPrefix(), gramer.getSuffix())
                 .setValidErrorHandler(new Configure.DiscardHandler())
                 .addPlugin(gramer.getCustomizeList(), new ListRenderPolicy() {
                     @Override
@@ -72,21 +76,14 @@ public class DocumentConfig {
                         }
                     }
 
-                })
-                .setRenderDataComputeFactory(envModel ->
-                        el -> {
-                            Object data = envModel.getRoot();
-                            if ("#this".equals(el)) {
-                                return data;
-                            } else if (data instanceof Map) {
-                                @SuppressWarnings("rawtypes") Map dataMap = ((Map) data);
-                                if (dataMap.containsKey(el)) {
-                                    return dataMap.get(el);
-                                }
-                            }
-                            return null;
-                        })
-                .build();
+                });
+        if (springEl) {
+            configureBuilder.useSpringEL()
+                    .setRenderDataComputeFactory(model -> new EnhancedSpringELRenderDataCompute(model, false));
+        } else {
+            configureBuilder.setRenderDataComputeFactory(model -> new EnhancedELRenderDataCompute(model, false));
+        }
+        return configureBuilder.build();
     }
 
     /**
