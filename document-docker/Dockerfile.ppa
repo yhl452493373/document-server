@@ -46,7 +46,7 @@ RUN rm -f /etc/apt/sources.list.d/* && \
     rm -rf /var/lib/apt/lists/*
 
 # 安装 LibreOffice（通过 PPA）
-# 注意：PPA 当前版本为 26.2.5.2，如需最新版本请使用官方 deb 包方案（见 Dockerfile.bak）
+# 注意：PPA 当前版本为 26.2.5.2，如需最新版本请使用官方 deb 包方案（见 Dockerfile）
 RUN apt update && \
     # 添加 LibreOffice PPA 源（使用 trusted=yes）
     echo "deb [trusted=yes] https://ppa.launchpadcontent.net/libreoffice/ppa/ubuntu noble main" > /etc/apt/sources.list.d/libreoffice-ppa-noble.list && \
@@ -87,6 +87,8 @@ ENV GRAMER_PREFIX="\\\${"
 ENV GRAMER_SUFFIX="}"
 ENV GRAMER_CUSTOMIZE_LIST="%"
 ENV GRAMER_CUSTOMIZE_LIST_STRING_DELIMITING="，"
+# LibreOffice 安装路径（PPA 安装在 /usr/lib/libreoffice）
+ENV OFFICE_HOME=/usr/lib/libreoffice
 
 # 暴露端口
 EXPOSE 9004

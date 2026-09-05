@@ -78,13 +78,8 @@ RUN cd /tmp && \
     else \
         ln -sf /usr/lib/x86_64-linux-gnu/libssl.so.3 /usr/lib/x86_64-linux-gnu/libssl3.so; \
     fi && \
-    # 清理不需要的 LibreOffice 组件（仅保留 Writer 和核心运行库）
+    # 清理不需要的组件（保留 Writer/Calc/Draw/Impress 用于格式转换）
     rm -rf /opt/libreoffice26.8/program/libbase* \
-           /opt/libreoffice26.8/program/libcalc* \
-           /opt/libreoffice26.8/program/libmath* \
-           /opt/libreoffice26.8/program/libdraw* \
-           /opt/libreoffice26.8/program/libimpress* \
-           /opt/libreoffice26.8/program/libchart* \
            /opt/libreoffice26.8/share/basic \
            /opt/libreoffice26.8/share/Scripts/python \
            /opt/libreoffice26.8/share/Scripts/java/NLPSolver \

@@ -30,7 +30,7 @@ document-docker/
 - **特点**：
   - 首次构建时从镜像站下载官方 deb 包，后续使用缓存
   - 安装路径：`/opt/libreoffice26.8`
-  - 通过符号链接映射到 `/usr/lib/libreoffice`，便于 JODConverter 自动识别
+  - 通过环境变量 `OFFICE_HOME` 指定路径，供 JODConverter 使用
   - 需要手动处理部分依赖（已在 Dockerfile 中配置）
 
 ### 备选方案：PPA 源
@@ -118,6 +118,7 @@ services:
 |------|--------|------|
 | `SERVER_VERSION` | `1` | 服务版本：`1` = poi-tl，`2` = docx4j |
 | `DOCUMENT_SERVER_PORT` | `9004` | 服务端口 |
+| `OFFICE_HOME` | `/opt/libreoffice26.8` | LibreOffice 安装路径 |
 | `PORT_NUMBERS` | `2002` | LibreOffice 进程端口，逗号分隔，每个端口一个常驻进程 |
 | `MAX_TASKS_PER_PROCESS` | `200` | 每个进程最多处理任务数 |
 | `GRAMER_PREFIX` | `${` | 模板语法前缀（仅版本 1） |
