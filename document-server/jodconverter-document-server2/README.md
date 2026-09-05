@@ -58,8 +58,8 @@ public DocumentService documentService() {
 |------|------|------|
 | `jodconverter-local` | 4.4.9 | LibreOffice 文档转换 |
 | `jodconverter-spring-boot-starter` | 4.4.9 | Spring Boot 自动配置 |
-| `word-generator` | 1.0.0 | Word 模板引擎（本地 jar，位于 `lib/`） |
-| `word-generator-model` | 1.0.0 | Word 模板模型（本地 jar，位于 `lib/`） |
+| `word-generator` | 1.0.0 | Word 模板引擎（本地 jar，位于 `lib/`，[源码](https://gitea.yanghuanglin.cn/yhl452493373/word-generator-engine)） |
+| `word-generator-model` | 1.0.0 | Word 模板模型（本地 jar，位于 `lib/`，[源码](https://gitea.yanghuanglin.cn/yhl452493373/word-generator-engine)） |
 | `docx4j-core` | 8.3.14 | docx4j 核心 |
 | `docx4j-JAXB-Internal` | 8.3.14 | docx4j JAXB 实现 |
 | `pdfbox-tools` | 2.0.25 | PDF 转图片 |

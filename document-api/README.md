@@ -52,6 +52,8 @@
 </dependency>
 ```
 
+> `word-generator` 和 `word-generator-model` 为本地 jar（位于项目 `lib/` 目录），源码地址：https://gitea.yanghuanglin.cn/yhl452493373/word-generator-engine
+
 可用的数据模型类型：
 
 | 类型 | 包路径 | 说明 |
