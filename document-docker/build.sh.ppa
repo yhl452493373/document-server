@@ -1,23 +1,18 @@
 #!/bin/bash
 # =============================================================================
-# LibreOffice 构建脚本说明：
+# LibreOffice PPA 构建脚本（备选方案）
 #
-# 本脚本使用官方 deb 包安装 LibreOffice（版本 26.8.0）
-# - 下载缓存目录：./cache
-# - 首次构建时下载，后续构建使用缓存
-# - 支持 amd64 和 arm64 双架构
+# 说明：
+# - 使用 PPA 源安装 LibreOffice，构建简单，无需手动下载
+# - 当前 PPA 版本：26.2.5.2（非最新版）
+# - 安装路径：/usr/lib/libreoffice（与 apt 安装一致）
 #
-# 备选方案：
-# - PPA 方案（版本 26.2.5.2）：见 build.sh.ppa 和 Dockerfile.ppa
-# - PPA 方案无需下载，但版本较旧
+# 如需最新版本（26.8.0），请使用主方案：
+# - 见 build.sh 和 Dockerfile（使用官方 deb 包）
 # =============================================================================
 
 # 设置Maven路径
 export PATH=$PATH:"/Volumes/Macintosh Data/Software/apache-maven-3.9.3/bin"
-
-# LibreOffice 版本
-LIBREOFFICE_VERSION="26.8.0"
-CACHE_DIR="./cache"
 
 # 解析参数
 SKIP_BUILD=false
@@ -43,25 +38,6 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-# 下载 LibreOffice 包（如果不存在）
-download_lo() {
-    local arch=$1
-    local lo_arch=$2
-    local filename="LibreOffice_${LIBREOFFICE_VERSION}_Linux_${lo_arch}_deb.tar.gz"
-    local filepath="${CACHE_DIR}/${filename}"
-
-    mkdir -p "$CACHE_DIR"
-
-    if [ -f "$filepath" ]; then
-        echo "✓ ${arch} 包已存在: ${filename}"
-    else
-        echo "↓ 下载 ${arch} 包..."
-        curl -fSL -o "$filepath" \
-            "https://mirrors.ustc.edu.cn/tdf/libreoffice/stable/${LIBREOFFICE_VERSION}/deb/${lo_arch}/${filename}"
-        echo "✓ ${arch} 下载完成"
-    fi
-}
-
 # 创建临时目录存放需要运行的jar
 mkdir -p app
 
@@ -83,22 +59,16 @@ cp ../document-server/jodconverter-document-server2/target/application.yml app/a
 
 #amd64
 echo 开始构建amd64镜像...
-download_lo "amd64" "x86-64"
-cp "${CACHE_DIR}/LibreOffice_${LIBREOFFICE_VERSION}_Linux_x86-64_deb.tar.gz" app/libreoffice.tar.gz
 docker buildx build --platform linux/amd64 -t yhl452493373/document-server:1.0 ./
 rm -rf document-server-1.0.tar.gz
 docker save yhl452493373/document-server:1.0 | gzip > document-server-1.0.tar.gz
-rm -f app/libreoffice.tar.gz
 echo amd64镜像构建成功.
 
 #arm64
 echo 开始构建arm64镜像...
-download_lo "arm64" "aarch64"
-cp "${CACHE_DIR}/LibreOffice_${LIBREOFFICE_VERSION}_Linux_aarch64_deb.tar.gz" app/libreoffice.tar.gz
 docker buildx build --platform linux/arm64 -t yhl452493373/document-server:1.0.arm64 ./
 rm -rf document-server-1.0.arm64.tar.gz
 docker save yhl452493373/document-server:1.0.arm64 | gzip > document-server-1.0.arm64.tar.gz
-rm -f app/libreoffice.tar.gz
 echo arm64镜像构建成功.
 
 # 清理临时文件

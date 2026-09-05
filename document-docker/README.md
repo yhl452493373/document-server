@@ -19,6 +19,38 @@ document-docker/
 └── document-server-1.0.arm64.tar.gz   # arm64 镜像归档
 ```
 
+## LibreOffice 安装方案
+
+本项目提供两种 LibreOffice 安装方案：
+
+### 主方案：官方 deb 包（推荐）
+
+- **版本**：26.8.0（最新稳定版）
+- **文件**：`Dockerfile` + `build.sh`
+- **特点**：
+  - 首次构建时从镜像站下载官方 deb 包，后续使用缓存
+  - 安装路径：`/opt/libreoffice26.8`
+  - 通过符号链接映射到 `/usr/lib/libreoffice`，便于 JODConverter 自动识别
+  - 需要手动处理部分依赖（已在 Dockerfile 中配置）
+
+### 备选方案：PPA 源
+
+- **版本**：26.2.5.2（非最新版）
+- **文件**：`Dockerfile.ppa` + `build.sh.ppa`
+- **特点**：
+  - 构建简单，无需手动下载
+  - 安装路径：`/usr/lib/libreoffice`（与 apt 安装一致）
+  - 自动处理依赖
+  - PPA 目前未提供 26.8.0 版本
+
+如需切换到 PPA 方案，将文件重命名即可：
+```bash
+mv Dockerfile Dockerfile.official
+mv build.sh build.sh.official
+mv Dockerfile.ppa Dockerfile
+mv build.sh.ppa build.sh
+```
+
 ## 构建
 
 执行 [build.sh](build.sh)：

@@ -28,6 +28,16 @@ fi
 echo "使用服务版本: $SERVER_VERSION"
 echo "JAR: $JAR_FILE"
 
+# 打印 LibreOffice 版本
+echo "LibreOffice 版本:"
+if [ -n "$OFFICE_HOME" ] && [ -x "$OFFICE_HOME/program/soffice" ]; then
+    "$OFFICE_HOME/program/soffice" --version 2>/dev/null || echo "无法获取版本信息"
+elif command -v libreoffice >/dev/null 2>&1; then
+    libreoffice --version 2>/dev/null
+else
+    echo "未找到 LibreOffice"
+fi
+
 # -----------------------------
 # 启动 Java 应用
 # -----------------------------

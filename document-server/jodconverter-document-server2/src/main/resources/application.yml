@@ -14,6 +14,7 @@ jodconverter:
     # linux下：program/soffice.bin 的 program 所在目录
     # 如果不配置，则自动查找
     #office-home: /Applications/LibreOffice.app/Contents
+    office-home: ${OFFICE_HOME:}
     # 一个端口表示一个常驻进程，默认只有一个进程，端口为2002
     port-numbers: ${PORT_NUMBERS:2002}
     # 每个进程最多处理多个任务，默认为200
