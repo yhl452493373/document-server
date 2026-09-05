@@ -2,6 +2,16 @@
 
 基于 **poi-tl + JodConverter** 的文档处理服务，通过 `HttpInvoker` 对外暴露 `DocumentService` 接口。
 
+## 与 server2 的对比
+
+本模块（server1）使用 **poi-tl** 作为模板引擎，功能更强大：
+- 支持丰富的模板语法（文本、图片、表格、图表、嵌套等）
+- 支持 SpringEL 表达式
+- 支持自定义插件扩展
+- 适合复杂文档模板场景
+
+如果需要优先确保转换后格式不乱，可使用 [jodconverter-document-server2](../jodconverter-document-server2/)（基于 docx4j）。
+
 ## 功能
 
 | 方法 | 说明 |

@@ -78,17 +78,54 @@ RUN cd /tmp && \
     else \
         ln -sf /usr/lib/x86_64-linux-gnu/libssl.so.3 /usr/lib/x86_64-linux-gnu/libssl3.so; \
     fi && \
-    # 清理不需要的组件（保留 Writer/Calc/Draw/Impress 用于格式转换）
-    rm -rf /opt/libreoffice26.8/program/libbase* \
+    # 清理 LibreOffice：仅保留无头格式转换能力（Writer/Calc/Draw/Impress）
+    # 删除 Python 运行时（不需要 Python 脚本支持）
+    rm -rf /opt/libreoffice26.8/program/python-core-* \
+           /opt/libreoffice26.8/program/libpython* && \
+    # 删除数据库连接器（不需要数据库连接）
+    rm -f /opt/libreoffice26.8/program/libpostgresql-sdbc-impllo.so \
+          /opt/libreoffice26.8/program/libmysqlclo.so \
+          /opt/libreoffice26.8/program/libmysqljdbclo.so \
+          /opt/libreoffice26.8/program/libhsqldblo.so \
+          /opt/libreoffice26.8/program/libfirebirdlo.so \
+          /opt/libreoffice26.8/program/liblibreofficekitgtk.so \
+          /opt/libreoffice26.8/program/libldapbe2lo.so \
+           /opt/libreoffice26.8/program/libbase* && \
+    # 删除 share 下所有 UI 和非转换相关组件
+    rm -rf /opt/libreoffice26.8/share/config/images_* \
+           /opt/libreoffice26.8/share/extensions/dict-* \
+           /opt/libreoffice26.8/share/extensions/wiki-publisher \
+           /opt/libreoffice26.8/share/extensions/nlpsolver \
+           /opt/libreoffice26.8/share/Extensions/report-builder \
+           /opt/libreoffice26.8/share/gallery \
+           /opt/libreoffice26.8/share/template \
+           /opt/libreoffice26.8/share/wizards \
+           /opt/libreoffice26.8/share/fonts \
+           /opt/libreoffice26.8/share/autocorr \
+           /opt/libreoffice26.8/share/autotext \
+           /opt/libreoffice26.8/share/fingerprint \
+           /opt/libreoffice26.8/share/firebird \
+           /opt/libreoffice26.8/share/glade \
+           /opt/libreoffice26.8/share/labels \
+           /opt/libreoffice26.8/share/palette \
+           /opt/libreoffice26.8/share/skia \
+           /opt/libreoffice26.8/share/svx \
+           /opt/libreoffice26.8/share/theme_definitions \
+           /opt/libreoffice26.8/share/themes \
+           /opt/libreoffice26.8/share/tipoftheday \
+           /opt/libreoffice26.8/share/toolbarmode \
+           /opt/libreoffice26.8/share/wordbook \
+           /opt/libreoffice26.8/share/xdg \
+           /opt/libreoffice26.8/share/xpdfimport \
            /opt/libreoffice26.8/share/basic \
            /opt/libreoffice26.8/share/Scripts/python \
            /opt/libreoffice26.8/share/Scripts/java/NLPSolver \
-           /opt/libreoffice26.8/share/Extensions/report-builder \
-           /opt/libreoffice26.8/share/extensions/nlpsolver \
            /opt/libreoffice26.8/help \
            /opt/libreoffice26.8/readmes \
            /opt/libreoffice26.8/LICENSE \
-           /opt/libreoffice26.8/LICENSE.html && \
+           /opt/libreoffice26.8/LICENSE.html \
+           /opt/libreoffice26.8/CREDITS.fodt \
+           /opt/libreoffice26.8/NOTICE && \
     # 清理 apt 缓存、文档、man
     apt autoremove -y && \
     apt clean && \

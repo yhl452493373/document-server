@@ -4,6 +4,15 @@
 
 与 `jodconverter-document-server` 的区别：本模块使用 `word-generator`（基于 docx4j）处理 Word 模板，而非 poi-tl。
 
+## 与 server1 的对比
+
+本模块（server2）使用 **docx4j** 作为模板引擎，优先确保转换后格式不乱：
+- 直接操作 OOXML 底层结构，保留原始格式
+- 适合对格式保真度要求高的场景
+- 模板语法相对简单
+
+如果需要更强大的模板功能（如 SpringEL、图表、嵌套表格等），可使用 [jodconverter-document-server](../jodconverter-document-server/)（基于 poi-tl）。
+
 ## 功能
 
 | 方法 | 说明 |
