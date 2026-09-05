@@ -1,7 +1,6 @@
 package com.optima.document.server;
 
 import com.optima.document.api.DocumentService;
-import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean;
@@ -9,11 +8,12 @@ import org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
 @Disabled
-public class JodConverterDocumentServerTest {
+public class JodConverterDocumentServer2Test {
 
     @Test
     public void test() throws IOException {
@@ -28,14 +28,14 @@ public class JodConverterDocumentServerTest {
 
         byte[] sourceBytes = documentService.generateWord(Files.readAllBytes(sourceDocx.toPath()), params);
 
-        byte[] bytes = documentService.wordToPdf(sourceBytes, false);
-        FileUtils.writeByteArrayToFile(targetPdf, bytes);
+        byte[] bytes = documentService.wordToPdf(sourceBytes, true);
+        Files.write(Paths.get(targetPdf.getPath()),bytes);
     }
 
     private static DocumentService buildDocumentService() {
         // 创建客户端代理
         HttpInvokerProxyFactoryBean factoryBean = new HttpInvokerProxyFactoryBean();
-        factoryBean.setServiceUrl("http://127.0.0.1:9005/document-service");
+        factoryBean.setServiceUrl("http://127.0.0.1:9004/document-service");
         factoryBean.setServiceInterface(DocumentService.class);
         factoryBean.afterPropertiesSet();
 

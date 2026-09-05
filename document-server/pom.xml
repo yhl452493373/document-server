@@ -14,6 +14,7 @@
     <modules>
         <module>docto-document-server</module>
         <module>jodconverter-document-server</module>
+        <module>jodconverter-document-server2</module>
     </modules>
 
     <properties>
@@ -25,6 +26,7 @@
         <fastjson.version>2.0.58</fastjson.version>
         <fastjson2.version>2.0.57</fastjson2.version>
         <hutool-json.version>5.8.39</hutool-json.version>
+        <docx4j.version>8.3.14</docx4j.version>
     </properties>
 
     <dependencies>
@@ -70,11 +72,6 @@
         <dependency>
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>pdfbox-tools</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.deepoove</groupId>
-            <artifactId>poi-tl</artifactId>
         </dependency>
 
         <dependency>
@@ -142,6 +139,36 @@
                 <artifactId>log4j-api</artifactId>
                 <version>${log4j.version}</version>
             </dependency>
+
+            <!-- 使用 docx4j 进行 word 操作相关依赖开始 -->
+            <dependency>
+                <groupId>info.hncy</groupId>
+                <artifactId>word-generator</artifactId>
+                <version>1.0.0</version>
+                <scope>system</scope>
+                <systemPath>${root.dir}/lib/word-generator-1.0.0.jar</systemPath>
+            </dependency>
+
+            <dependency>
+                <groupId>info.hncy</groupId>
+                <artifactId>word-generator-model</artifactId>
+                <version>1.0.0</version>
+                <scope>system</scope>
+                <systemPath>${root.dir}/lib/word-generator-model-1.0.0.jar</systemPath>
+            </dependency>
+
+            <dependency>
+                <groupId>org.docx4j</groupId>
+                <artifactId>docx4j-JAXB-Internal</artifactId>
+                <version>${docx4j.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.docx4j</groupId>
+                <artifactId>docx4j-core</artifactId>
+                <version>${docx4j.version}</version>
+            </dependency>
+            <!-- 使用 docx4j 进行 word 操作相关依赖结束 -->
 
             <dependency>
                 <groupId>org.projectlombok</groupId>

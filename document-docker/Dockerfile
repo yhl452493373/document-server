@@ -39,9 +39,11 @@ RUN rm -f /etc/apt/sources.list.d/* && \
 WORKDIR /app
 RUN mkdir -p /app/logs
 
-# 拷贝应用文件、配置、字体
-COPY app/document-server-*.jar /app/application.jar
+# 拷贝应用文件（两个服务的 jar 和配置）
+COPY app/jodconverter-document-server.jar /app/jodconverter-document-server.jar
+COPY app/jodconverter-document-server2.jar /app/jodconverter-document-server2.jar
 COPY app/application.yml /app/application.yml
+COPY app/application2.yml /app/application2.yml
 
 # 拷贝字体文件并刷新字体缓存
 COPY fonts/truetype /usr/share/fonts/truetype
@@ -55,6 +57,8 @@ COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 # 环境变量配置
+# SERVER_VERSION: 1 (默认, poi-tl) 或 2 (docx4j)
+ENV SERVER_VERSION=1
 ENV DOCUMENT_SERVER_PORT=9004
 ENV PORT_NUMBERS=2002
 ENV MAX_TASKS_PER_PROCESS=200

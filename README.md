@@ -11,6 +11,11 @@
 + [docto-document-server](document-server/docto-document-server)下使用poi-tl处理word文件，使用docto调用`Microsoft Office`来转换格式，`java -jar xxx.jar`启动
     + 仅能运行在Windows，兼容性最好，比较慢
   
++ [jodconverter-document-server2](document-server/jodconverter-document-server2)下使用 word-generator（基于 docx4j）处理 Word 模板，使用 JodConverter 调用 [LibreOffice](https://zh-cn.libreoffice.org/) 进行格式转换，`java -jar xxx.jar`启动
+  + 与 jodconverter-document-server 的区别：模板引擎使用 docx4j（word-generator）而非 poi-tl
+  + 需要安装 LibreOffice
+  + 在 Linux 下同样需要注意字体问题
+
 + [document-docker/fonts](document-docker/fonts)为linux下需要安装的中文字体
 
 ---
@@ -69,13 +74,11 @@ sudo systemctl start document-server
 
 ## 构建Docker镜像以便于通过Docker容器运行
 
-1.先通过maven打包[jodconverter-document-server](document-server/jodconverter-document-server)
+1.执行[build.sh](document-docker/build.sh)（会自动构建两个服务模块的 jar）
 
-2.执行[build.sh](document-docker/build.sh)
+2.通过`docker load -i document-server-1.0.tar.gz`导入镜像，通过`docker ps | grep document-server`查看镜像版本
 
-3.通过`docker load -i document-server-1.0.tar.gz`导入镜像，通过`docker ps | grep document-server`查看镜像版本
-
-4.编写`docker-compose.yml`，在其中指定镜像启动
+3.编写`docker-compose.yml`，在其中指定镜像启动，通过 `SERVER_VERSION` 环境变量选择服务版本
 ```yml
 version: '3.8'
 services:
@@ -86,9 +89,12 @@ services:
       - DISABLE_IPV6=true
       - CUSTOM_PORT=3000
       - CUSTOM_HTTPS_PORT=3001
+      # 服务版本选择：1 (默认, poi-tl) 或 2 (docx4j)
+      - SERVER_VERSION=1
       - DOCUMENT_SERVER_PORT=9004
       - PORT_NUMBERS=2001,2002,2003
       - MAX_TASKS_PER_PROCESS=100
+      # 以下配置仅版本 1 需要（版本 2 无需这些配置）
       # 传递环境变量时，$ 是特殊符号，需要 $$ 来表示
       # linux 命令中，$ 也是特殊符号，需要在前面增加 \ 表示转义特殊符号
       # 如果需要传递 ${ ，则需要写成 \$${ 。其首先被 docker 解析为 \${ ，\${ 作为linux命令的一部分，$转义后，相当于字符串 ${
@@ -103,8 +109,6 @@ services:
     volumes:
       # libreoffice的配置保存路径
       - ./config:/config
-      # document-server的配置，如不指定，则以默认为准。建议通过环境变量修改关键配置
-      - ./application.yml:/app/application.yml
     restart: unless-stopped
     # 如果要使用现有网络而不创建新网络，则取消下面的注释
 #    networks:
@@ -118,7 +122,14 @@ services:
 #    external: true
 ```
 
-`application.yml`默认内容如下：
+### 服务版本说明
+
+| SERVER_VERSION | 模板引擎 | 说明 |
+|----------------|----------|------|
+| `1` | poi-tl | 默认值，支持自定义模板语法 |
+| `2` | word-generator (docx4j) | 使用 docx4j 处理模板 |
+
+`document-server` 的 `application.yml` 默认内容如下：
 ```yml
 server:
   port: ${DOCUMENT_SERVER_PORT:9004}
@@ -130,8 +141,10 @@ document:
       suffix: '}'
     prefix: ${GRAMER_PREFIX:${document.gramer.default.prefix}}
     suffix: ${GRAMER_SUFFIX:${document.gramer.default.suffix}}
-    customize-list-tag: ${GRAMER_CUSTOMIZE_LIST:%}
-    customize-list-tag-string-delimiting: ${GRAMER_CUSTOMIZE_LIST_STRING_DELIMITING:，}
+    customize-list: ${GRAMER_CUSTOMIZE_LIST:%}
+    customize-list-string-delimiting: ${GRAMER_CUSTOMIZE_LIST_STRING_DELIMITING:，}
+  min-inflate-ratio: 0.0
+  spring-el: false
 
 jodconverter:
   local:
@@ -147,6 +160,63 @@ jodconverter:
     # 每个进程最多处理多个任务，默认为200
     max-tasks-per-process: ${MAX_TASKS_PER_PROCESS:200}
 ```
+
+`document-server2` 的 `application.yml` 默认内容如下：
+```yml
+server:
+  port: ${DOCUMENT_SERVER_PORT:9004}
+
+logging:
+  level:
+    org.docx4j: WARN
+
+jodconverter:
+  local:
+    # 启动本地转换
+    enabled: true
+    # macOS下：program/soffice 的 program 所在目录 或 MacOS/soffice 的 MacOS 所在目录
+    # windows下：program/soffice.exe 的 program 所在目录
+    # linux下：program/soffice.bin 的 program 所在目录
+    # 如果不配置，则自动查找
+    #office-home: /Applications/LibreOffice.app/Contents
+    # 一个端口表示一个常驻进程，默认只有一个进程，端口为2002
+    port-numbers: ${PORT_NUMBERS:2002}
+    # 每个进程最多处理多个任务，默认为200
+    max-tasks-per-process: ${MAX_TASKS_PER_PROCESS:200}
+```
+
+### 客户端调用依赖
+
+无论使用哪个服务，客户端项目都只需引入 `document-api`，通过 `HttpInvoker` 配置远程调用：
+
+```xml
+<dependency>
+    <groupId>com.optima</groupId>
+    <artifactId>document-api</artifactId>
+    <version>2.0.0</version>
+</dependency>
+```
+
+客户端配置示例：
+
+```java
+@Bean
+public DocumentService documentService() {
+    HttpInvokerProxyFactoryBean factory = new HttpInvokerProxyFactoryBean();
+    factory.setServiceUrl("http://localhost:9004/document-service");
+    factory.setServiceInterface(DocumentService.class);
+    factory.afterPropertiesSet();
+    return (DocumentService) factory.getObject();
+}
+```
+
+各服务端对应的额外依赖（已包含在服务 jar 中，部署时无需额外引入）：
+
+| 服务 | 模板引擎 | 格式转换 | 额外依赖 |
+|------|----------|----------|----------|
+| `jodconverter-document-server` | poi-tl | JodConverter + LibreOffice | `poi-tl`、`jodconverter` |
+| `jodconverter-document-server2` | word-generator (docx4j) | JodConverter + LibreOffice | `word-generator`、`docx4j`、`jodconverter` |
+| `docto-document-server` | poi-tl | docto + Microsoft Office | `poi-tl`（仅 Windows） |
 
 ---
 
