@@ -1,9 +1,8 @@
 package com.optima.document.test.bean;
 
-import com.deepoove.poi.data.PictureRenderData;
-import com.deepoove.poi.data.Pictures;
 import com.optima.document.api.DocumentService;
 import com.optima.document.test.config.DocumentServiceConfig;
+import info.hncy.word.generator.model.PictureData;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -47,14 +46,18 @@ public class DocumentConverter {
 
         byte[] bytes = Files.readAllBytes(Paths.get("/Users/yanghuanglin/Downloads/02.png"));
 
-        params.put("img", Pictures.ofBytes(bytes).size(48, 27).create());
+        params.put("img", PictureData.of(bytes).size(96, 54).create());
 
-        List<PictureRenderData> imgList = new ArrayList<>();
-        imgList.add(Pictures.ofBytes(bytes).size(48, 27).create());
-        imgList.add(Pictures.ofBytes(bytes).size(48, 27).create());
+        List<PictureData> imgList = new ArrayList<>();
+        imgList.add(PictureData.of(bytes).size(48, 27).create());
+        imgList.add(PictureData.of(bytes).size(48, 27).create());
         params.put("imgList", imgList);
 
-        params.put("urlImg",Pictures.ofUrl("https://xct.cdhncy.cn/file/city/2025/10/28/fa03c40bdfc64a4f9e1241ebda6b3fda_1761641676690.jpeg").create());
+        try {
+            params.put("urlImg",PictureData.ofUrl("https://infinitypro-img.infinitynewtab.com/findaphoto/bigLink/b493da980e12fef71d155ed1e78c57e9.jpg").create());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
         // 生成word，并转为pdf
         byte[] generatedWord = documentService.generateWord(Files.readAllBytes(sourceFile.toPath()), params);

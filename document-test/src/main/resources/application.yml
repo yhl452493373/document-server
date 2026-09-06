@@ -1,4 +1,4 @@
 document:
   server: http://127.0.0.1:9004
-  source-file: "/Volumes/Working/Works/Git Sources/document/document-test/src/main/resources/test.docx"
+  source-file: "/Volumes/Macintosh Data/Works/Git Sources/document/document-test/src/main/resources/test.docx"
   target-file: "/Users/yanghuanglin/Downloads/test.pdf"
