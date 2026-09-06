@@ -3,7 +3,7 @@
 + api下为调用的接口，在需要处理文书的项目中引用，以`Http Invoker`配置Service后进行调用
     + 参考[在Spring Boot中使用Http Invoker](https://codeleading.com/article/15413828287/) 的`Client`部分
 
-+ [jod-document-server](document-server/jod-document-server)下使用poi-tl处理word文件，使用jacob处理调用[LibreOffice](https://zh-cn.libreoffice.org/)来进行格式转换，`java -jar xxx.jar`启动
++ [jodconverter-document-server](document-server/jodconverter-document-server)下使用poi-tl处理word文件，使用JodConverter调用[LibreOffice](https://zh-cn.libreoffice.org/)来进行格式转换，`java -jar xxx.jar`启动
   + 参考：[springboot整合libreoffice（两种方式，使用本地和远程的libreoffice）；docker中同时部署应用和libreoffice](https://blog.csdn.net/qq_42882229/article/details/140917550)
   + 在Linux下，需要注意word文件的字体，必须在Linux中存在
   + 若出现格式问题，需先使用LibreOffice打开修复后，在进行转换
@@ -187,15 +187,32 @@ jodconverter:
 
 ### 客户端调用依赖
 
-无论使用哪个服务，客户端项目都只需引入 `document-api`，通过 `HttpInvoker` 配置远程调用：
+客户端项目需引入 `document-api`，根据后端不同还需引入对应的模板引擎包（用于构造 `PictureRenderData`、`PictureData` 等模板数据对象），通过 `HttpInvoker` 配置远程调用：
 
 ```xml
+<!-- 接口定义，始终需要 -->
 <dependency>
     <groupId>com.optima</groupId>
     <artifactId>document-api</artifactId>
     <version>2.0.0</version>
 </dependency>
+
+<!-- 对接 poi-tl 后端（jodconverter-document-server 或 docto-document-server）时引入 -->
+<dependency>
+    <groupId>com.deepoove</groupId>
+    <artifactId>poi-tl</artifactId>
+    <version>1.12.2</version>
+</dependency>
+
+<!-- 对接 docx4j 后端（jodconverter-document-server2）时引入 -->
+<dependency>
+    <groupId>info.hncy</groupId>
+    <artifactId>word-generator-model</artifactId>
+    <version>1.0.0</version>
+</dependency>
 ```
+
+> 如果只使用 `convert`、`wordToPdf`、`docToDocx` 等不涉及模板数据的方法，仅引入 `document-api` 即可。
 
 客户端配置示例：
 
@@ -210,13 +227,13 @@ public DocumentService documentService() {
 }
 ```
 
-各服务端对应的额外依赖（已包含在服务 jar 中，部署时无需额外引入）：
+各服务端对比及客户端依赖：
 
-| 服务 | 模板引擎 | 格式转换 | 额外依赖 |
-|------|----------|----------|----------|
-| `jodconverter-document-server` | poi-tl | JodConverter + LibreOffice | `poi-tl`、`jodconverter` |
-| `jodconverter-document-server2` | word-generator (docx4j) | JodConverter + LibreOffice | `word-generator`、`docx4j`、`jodconverter` |
-| `docto-document-server` | poi-tl | docto + Microsoft Office | `poi-tl`（仅 Windows） |
+| 服务 | 模板引擎 | 格式转换 | 客户端需引入 |
+|------|----------|----------|-------------|
+| `jodconverter-document-server` | poi-tl | JodConverter + LibreOffice | `document-api` + `poi-tl` |
+| `jodconverter-document-server2` | word-generator (docx4j) | JodConverter + LibreOffice | `document-api` + `word-generator-model` |
+| `docto-document-server` | poi-tl | docto + Microsoft Office | `document-api` + `poi-tl` |
 
 ---
 
