@@ -36,15 +36,25 @@
 
 ### 2. 在客户端项目中远程调用
 
-客户端项目需引入 `document-api`，通过 `HttpInvoker` 配置远程调用：
+客户端项目需引入 `document-api` 和 `poi-tl`，通过 `HttpInvoker` 配置远程调用：
 
 ```xml
+<!-- 接口定义 -->
 <dependency>
     <groupId>com.optima</groupId>
     <artifactId>document-api</artifactId>
     <version>2.0.0</version>
 </dependency>
+
+<!-- 构造模板数据（如 PictureRenderData、TextRenderData 等） -->
+<dependency>
+    <groupId>com.deepoove</groupId>
+    <artifactId>poi-tl</artifactId>
+    <version>1.12.2</version>
+</dependency>
 ```
+
+> 如果只使用 `convert`、`wordToPdf`、`docToDocx` 等不涉及模板数据的方法，仅引入 `document-api` 即可。
 
 客户端配置示例：
 
