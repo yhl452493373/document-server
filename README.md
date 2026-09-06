@@ -89,7 +89,7 @@ services:
       - DISABLE_IPV6=true
       - CUSTOM_PORT=3000
       - CUSTOM_HTTPS_PORT=3001
-      # 服务版本选择：1 (默认, poi-tl) 或 2 (docx4j)
+      # 服务版本选择：1 (默认, poi-tl) 或 2 (word-generator, 格式兼容性更好)
       - SERVER_VERSION=1
       - DOCUMENT_SERVER_PORT=9004
       - PORT_NUMBERS=2001,2002,2003
@@ -126,8 +126,8 @@ services:
 
 | SERVER_VERSION | 模板引擎 | 说明 |
 |----------------|----------|------|
-| `1` | poi-tl | 默认值，支持自定义模板语法 |
-| `2` | word-generator (docx4j) | 使用 docx4j 处理模板 |
+| `1` | poi-tl | 默认值，使用 poi-tl 模板语法，功能丰富（SpringEL、图表、嵌套表格等） |
+| `2` | word-generator (docx4j) | 部分模仿 poi-tl 语法，转换后格式兼容性更好；基于 [word-generator-engine](https://gitea.yanghuanglin.cn/yhl452493373/word-generator-engine) 项目 |
 
 `document-server` 的 `application.yml` 默认内容如下：
 ```yml

@@ -92,7 +92,7 @@ services:
     image: yhl452493373/document-server:1.0
     container_name: document-server
     environment:
-      # 服务版本选择：1 (默认, poi-tl) 或 2 (docx4j)
+      # 服务版本选择：1 (默认, poi-tl) 或 2 (word-generator, 格式兼容性更好)
       - SERVER_VERSION=1
       - DOCUMENT_SERVER_PORT=9004
       - PORT_NUMBERS=2001,2002,2003
@@ -116,7 +116,7 @@ services:
 
 | 变量 | 默认值 | 说明 |
 |------|--------|------|
-| `SERVER_VERSION` | `1` | 服务版本：`1` = poi-tl，`2` = docx4j |
+| `SERVER_VERSION` | `1` | 服务版本：`1` = poi-tl（功能丰富），`2` = word-generator/docx4j（部分模仿 poi-tl 语法，格式兼容性更好） |
 | `DOCUMENT_SERVER_PORT` | `9004` | 服务端口 |
 | `OFFICE_HOME` | `/opt/libreoffice26.8` | LibreOffice 安装路径 |
 | `PORT_NUMBERS` | `2002` | LibreOffice 进程端口，逗号分隔，每个端口一个常驻进程 |
